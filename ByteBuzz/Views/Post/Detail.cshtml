@@ -1,4 +1,4 @@
-﻿﻿@model Post
+﻿@model Post
 
 @{
     ViewData["Title"] = Model.Title;
@@ -26,7 +26,7 @@
     @if (User.IsInRole("Admin"))
     {
         <div class="col-12 col-md-6 text-end">
-            <a asp-action="Edit" asp-route-id ="@Model.Id" class="btn btn-secondary rounded  ">Edit Post</a>
+            <a asp-action="Edit" asp-route-id ="@Model.Id" class="btn btn-secondary rounded  " asp-controller="Post" asp-action="Edit" asp-route-id="@Model.Id">Edit Post</a>
         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger rounded mx-3 ">Delete Post</a>
     </div>
     }

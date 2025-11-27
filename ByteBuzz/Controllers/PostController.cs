@@ -1,4 +1,5 @@
 ﻿using ByteBuzz.Data;
+using ByteBuzz.Models;
 using ByteBuzz.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -34,6 +35,8 @@ namespace ByteBuzz.Controllers
 
             return View(posts);
         }
+
+   
 
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
@@ -97,6 +100,52 @@ namespace ByteBuzz.Controllers
             ).ToList();
             return View(postViewModel);
             
+        }
+
+        [HttpGet]
+        public async Task<IActionResult>Edit(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var postFromDb = await _context.Posts.FirstOrDefaultAsync(p => p.Id == id);
+            if (postFromDb == null)
+            {
+                return NotFound();
+            }
+
+            EditViewModel editViewModel = new EditViewModel
+            {
+                Post= postFromDb,
+                
+                Categories = _context.Categories.Select(c =>
+                    new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name,
+                    }
+            ).ToList()
+
+            };
+            return View(editViewModel);
+
+            }
+
+        public JsonResult AddComment( [FromBody]Comments comment) 
+       
+        {
+            comment.CommentDate = DateTime.Now;
+            _context.Comments.Add(comment);
+            _context.SaveChanges();
+
+            return Json(new
+            {
+                userName = comment.UserName,
+                commentDate = comment.CommentDate.ToString("MMMM dd ,yyyy"),
+                content = comment.Content
+            }
+                );
         }
         private async Task<string> UploadFiletoFolder(IFormFile file)
         {
